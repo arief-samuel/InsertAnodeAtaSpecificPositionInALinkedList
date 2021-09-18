@@ -17,6 +17,7 @@ namespace InsertAnodeAtaSpecificPositionInALinkedList
 
     class Solution
     {
+        public static bool Quit = false;
         class SinglyLinkedListNode
         {
             public int data;
@@ -57,94 +58,183 @@ namespace InsertAnodeAtaSpecificPositionInALinkedList
             }
         }
 
-        static void PrintSinglyLinkedList(SinglyLinkedListNode node, string sep, TextWriter textWriter)
+        static void PrintSinglyLinkedList(SinglyLinkedListNode node, string sep)
         {
             while (node != null)
             {
-                textWriter.Write(node.data);
+                Console.Write(node.data );
 
                 node = node.next;
 
                 if (node != null)
                 {
-                    textWriter.Write(sep);
+                    Console.Write(sep);
                 }
             }
         }
 
         class Result
         {
-
             /*
-             * Complete the 'insertNodeAtPosition' function below.
-             *
-             * The function is expected to return an INTEGER_SINGLY_LINKED_LIST.
-             * The function accepts following parameters:
-             *  1. INTEGER_SINGLY_LINKED_LIST llist
-             *  2. INTEGER data
-             *  3. INTEGER position
+             * Insert Node into Linked List
+             *   Write a function to insert a node in singly-linked list at a given point in the linked list. 
+             *   The function should take in two inputs: the value of the node and the position where the node will be inserted.
+             *   The position will be a 1-based index meaning that the position of the head node will be 1. 
+             *   The position will never be the beginning (the *head) or the end (the tail) of the list.
+             *   
+             *   List: 1 -> 5 -> 10 -> 3 -> 6
+             *   Input: insert(2,4)
+             *   Output: 1 -> 5 -> 10 -> 2 -> 3 -> 6
+             *   
+             *   List: 1 -> 5 -> 10 -> 3 -> 6
+             *   Input: insert(3,2)
+             *   Output: 1 -> 3 -> 5 -> 10 -> 3 -> 6
+             *   
+             *   List: 1 -> 5 -> 10 -> 3 -> 6
+             *   Input: insert(9,3)
+             *   Output: 1 -> 5 -> 9 -> 10 -> 3 -> 6
              */
-
-            /*
-             * For your reference:
-             *
-             * SinglyLinkedListNode
-             * {
-             *     int data;
-             *     SinglyLinkedListNode next;
-             * }
-             *
-             */
-
-            public static SinglyLinkedListNode insertNodeAtPosition(SinglyLinkedListNode llist, int data, int position)
+            public static SinglyLinkedListNode insertNodeAtPosition(int data, int position)
             {
-                SinglyLinkedListNode node = new SinglyLinkedListNode(data);
-                SinglyLinkedListNode currentNode = llist;
+                if (position == 1 || position == 6)
+                    throw new ArgumentException(nameof(position),"The position will never be the beginning (the *head) or the end (the tail) of the list.");
 
-                if (llist == null)
+                var llist = SeedSinglyLinkedList();
+                SinglyLinkedListNode node = new SinglyLinkedListNode(data);
+                SinglyLinkedListNode currentNode = llist.head;
+
+                if (llist.head == null)
                 {
                     return node;
                 }
 
-                for (var i = 0; i < position - 1; i++)
+                for (var i = 1; i < position - 1; i++)
                 {
                     currentNode = currentNode.next;
                 }
 
                 node.next = currentNode.next;
-                currentNode = node;
+                currentNode.next = node;
+
+                return llist.head;
+            }
+            public static SinglyLinkedList SeedSinglyLinkedList()
+            {
+                SinglyLinkedList llist = new SinglyLinkedList();
+                llist.InsertNode(1);
+                llist.InsertNode(5);
+                llist.InsertNode(10);
+                llist.InsertNode(3);
+                llist.InsertNode(6);
 
                 return llist;
             }
-
         }
 
         static void Main(string[] args)
         {
-            // TextWriter textWriter = new StreamWriter(@System.Environment.GetEnvironmentVariable("./"), true);
-            TextWriter textWriter = new StreamWriter(@"C:\Users\ephra-samuel\Documents\c#\dotnet\console-app\InsertAnodeAtaSpecificPositionInALinkedList\TestDir\test.txt", true);
+            Console.WriteLine("#=======================#");
+            Console.WriteLine("#        Welcome! #      ");
+            Console.WriteLine("#=======================#");
+            Console.WriteLine();
 
-            SinglyLinkedList llist = new SinglyLinkedList();
-
-            int llistCount = Convert.ToInt32(Console.ReadLine());
-
-            for (int i = 0; i < llistCount; i++)
+            while (!Quit)
             {
-                int llistItem = Convert.ToInt32(Console.ReadLine());
-                llist.InsertNode(llistItem);
+                var llist = Result.SeedSinglyLinkedList();
+                Console.Write("List: ");
+                PrintSinglyLinkedList(llist.head, " -> ");
+                Console.WriteLine();
+                Console.WriteLine();
+
+                Console.Write("Given the node to add : ");
+                int data;
+                bool result = int.TryParse(Console.ReadLine(), out data);
+                while (!result)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Please Input a valid number!");
+                    Console.WriteLine();
+
+                    Console.Write("Given the node to add : ");
+                    result = int.TryParse(Console.ReadLine(), out data);
+                }
+
+                Console.Write("Given the position where the node will be inserted : ");
+                int position;
+                bool result2 = int.TryParse(Console.ReadLine(), out position);
+                while (!result2)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Please Input a valid number!");
+                    Console.WriteLine();
+
+                    Console.Write("Given the value to add : ");
+                    result2 = int.TryParse(Console.ReadLine(), out position);
+                }
+                Console.WriteLine();
+
+                try
+                {
+                    SinglyLinkedListNode llist_head = Result.insertNodeAtPosition(data, position);
+                    Console.Write($"Input: Insert({data},{position})");
+                    Console.WriteLine();
+                    Console.Write($"Output: ");
+                    PrintSinglyLinkedList(llist_head, " -> ");
+                    Console.WriteLine();
+                }
+                catch (Exception Ex)
+                {
+                    Console.WriteLine($"Error : {Ex.Message}");
+                }
+
+                Console.WriteLine();
+                Console.Write("Do you want to continue y/N ? ");
+                var command = Console.ReadLine().ToLower();
+                Console.WriteLine();
+               
+                if (command == "y")
+                {
+                    Quit = false;
+                    Console.WriteLine();
+                }
+                else if (command == "n")
+                {
+                    Quit = true;
+                    Console.WriteLine("#=======================#");
+                    Console.WriteLine("Thank you for using this applications!");
+                    Console.WriteLine("Have a nice day!");
+                    Console.WriteLine("#=======================#");
+                    Console.Read();
+                }
+                else
+                {
+                    bool check = false;
+                    while (!check)
+                    {
+                        Console.Write($"{command} was not recognized, please try again y/N ? ");
+                        command = Console.ReadLine().ToLower();
+                        if (command == "y")
+                        {
+                            Quit = false;
+                            break;
+                        }
+                        else if (command == "n")
+                        {
+                            Quit = true;
+                            Console.WriteLine("#=======================#");
+                            Console.WriteLine("Thank you for using this applications!");
+                            Console.WriteLine("Have a nice day!");
+                            Console.WriteLine("#=======================#");
+                            Console.Read();
+                            break;
+                        }
+                        else
+                        {
+                            check = false;
+                        }
+                    }
+                }
             }
-
-            int data = Convert.ToInt32(Console.ReadLine());
-
-            int position = Convert.ToInt32(Console.ReadLine());
-
-            SinglyLinkedListNode llist_head = Result.insertNodeAtPosition(llist.head, data, position);
-
-            PrintSinglyLinkedList(llist_head, " ", textWriter);
-            textWriter.WriteLine();
-
-            textWriter.Flush();
-            textWriter.Close();
         }
     }
 
